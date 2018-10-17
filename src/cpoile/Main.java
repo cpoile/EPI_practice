@@ -1,9 +1,10 @@
 package cpoile;
 
-import cpoile.sedgewick.Ch1_3_Stack;
-import cpoile.sedgewick.Ch1_5_UnionFind1;
-import cpoile.thinkinglikeaprogrammer.Ex02_02;
+import cpoile.HackerRank.Visitor;
+import cpoile.sedgewick.Ch4_1_Graphs;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class Main {
@@ -26,6 +27,21 @@ public class Main {
 //        Ch1_5_UnionFind1.main(new String[] {"tinyUF.txt"});
 //        Ch1_5_UnionFind1.main(new String[] {"mediumUF.txt"});
 //        Ch1_5_UnionFind1.main(new String[] {"largeUF.txt"});
-        Ex13_00_SortingStudents.main(new String[]{});
+        //Ex13_00_SortingStudents.main(new String[]{});
+        //FileInputStream is = new FileInputStream(new File("input-oned.txt"));
+        //System.setIn(is);
+        //OneDArrayPart2.main();
+//        FileInputStream is = new FileInputStream(new File("input08.txt"));
+//        System.setIn(is);
+//        JavaDeque.main(new String[]{});
+
+//        FileInputStream is = new FileInputStream(new File("visitor-input01.txt"));
+//        //FileInputStream is = new FileInputStream(new File("visitor-test1.txt"));
+//        System.setIn(is);
+//        Visitor.main(new String[]{});
+
+        FileInputStream is = new FileInputStream(new File("tinyG.txt"));
+        System.setIn(is);
+        Ch4_1_Graphs.main(new String[]{});
     }
 }
