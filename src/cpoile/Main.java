@@ -1,6 +1,7 @@
 package cpoile;
 
 import cpoile.HackerRank.Visitor;
+import cpoile.sedgewick.Ch2_1_Sorts;
 import cpoile.sedgewick.Ch4_1_Graphs;
 
 import java.io.File;
@@ -40,8 +41,15 @@ public class Main {
 //        System.setIn(is);
 //        Visitor.main(new String[]{});
 
-        FileInputStream is = new FileInputStream(new File("tinyG.txt"));
+//        FileInputStream is = new FileInputStream(new File("tinyG.txt"));
+//        System.setIn(is);
+//        Ch4_1_Graphs.main(new String[]{});
+
+        FileInputStream is = new FileInputStream(new File("tinyChar.txt"));
         System.setIn(is);
-        Ch4_1_Graphs.main(new String[]{});
+        Ch2_1_Sorts.main();
+        /*is = new FileInputStream(new File("tinyTale.txt"));
+        System.setIn(is);
+        Ch2_1_Sorts.main();*/
     }
 }

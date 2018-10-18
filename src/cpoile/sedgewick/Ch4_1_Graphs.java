@@ -84,7 +84,5 @@ public class Ch4_1_Graphs {
         search = new DFSSearch(g, 9);
         search.PrintConnected(g, 9);
 
-        String test = "hi there";
-        test.charAt(2);
     }
 }
