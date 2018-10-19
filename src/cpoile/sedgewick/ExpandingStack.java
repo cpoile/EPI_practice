@@ -3,7 +3,7 @@ package cpoile.sedgewick;
 import java.util.Iterator;
 
 public class ExpandingStack<Item> implements Iterable {
-    private Item[] stack;
+    private Item[] stack = (Item[]) new Object[10];
     private int N;
 
     private class StackIterator implements Iterator<Item> {
@@ -17,7 +17,7 @@ public class ExpandingStack<Item> implements Iterable {
     }
 
     public ExpandingStack() {
-        stack = (Item[]) new Object[10];
+        //stack = (Item[]) new Object[10];
         N = 0;
     }
     public boolean isEmpty() { return N == 0; }
