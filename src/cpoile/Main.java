@@ -1,10 +1,7 @@
 package cpoile;
 
-import cpoile.HackerRank.Visitor;
-import cpoile.sedgewick.Ch2_1_Sorts;
-import cpoile.sedgewick.Ch2_4_IndexedPQ;
+import cpoile.sedgewick.Ch2_4_IndexedMinPQ;
 import cpoile.sedgewick.Ch2_4_PriorityQueues;
-import cpoile.sedgewick.Ch4_1_Graphs;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -54,7 +51,7 @@ public class Main {
         System.setIn(is);
         Ch2_1_Sorts.main();*/
 
-        Ch2_4_PriorityQueues.sort();
-        //Ch2_4_IndexedPQ.main();
+        //Ch2_4_PriorityQueues.sort();
+        Ch2_4_IndexedMinPQ.main();
     }
 }

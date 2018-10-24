@@ -12,7 +12,7 @@ public class Ch2_4_PriorityQueues {
             lst.add(scan.next());
 
         for (int i = 0; i < lst.size(); i++)
-            System.out.print(i + ": " + lst.get(i) + " ");
+            System.out.print(lst.get(i) + " ");
         System.out.println();
 
         MaxPQ<String> pq = new MaxPQ<>(lst.toArray(new String[]{}));
@@ -108,8 +108,4 @@ class MaxPQ<Key extends Comparable<Key>> {
         pq[a] = pq[b];
         pq[b] = aux;
     }
-}
-
-class IndexMinPQ<Key extends Comparable<Key>> {
-
 }
