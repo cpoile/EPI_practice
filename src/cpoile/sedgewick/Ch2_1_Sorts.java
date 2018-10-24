@@ -24,9 +24,9 @@ class Sort {
         //insertionSort(a);
         //shellSort(a);
         //mergeSort(a);
-        //bottomUpMergeSort(a);
+        bottomUpMergeSort(a);
         //quickSort(a);
-        quick3WaySort(a);
+        //quick3WaySort(a);
     }
 
     public static void selectionSort(Comparable[] a) {
@@ -104,15 +104,17 @@ class Sort {
     }
 
     private static void merge(Comparable[] a, int lo, int mid, int hi) {
-        for (int i = lo; i <= hi; i++)
-            aux[i] = a[i];
+        //for (int i = lo; i <= hi; i++)
+        //    aux[i] = a[i];
+        // or:
+        System.arraycopy(a, lo, aux, lo, hi-lo+1);
         int i = lo;
         int j = mid + 1;  // counter for second half
         for (int k = i; k <= hi; k++) {
-            if (i > mid) a[k] = aux[j++];  // finished first half
-            else if (j > hi) a[k] = aux[i++]; // finished second half
-            else if (less(aux[i], aux[j])) a[k] = aux[i++];
-            else a[k] = aux[j++];
+            if       (i > mid)              a[k] = aux[j++];  // finished first half
+            else if  (j > hi)               a[k] = aux[i++]; // finished second half
+            else if  (less(aux[i], aux[j])) a[k] = aux[i++];
+            else                            a[k] = aux[j++];
         }
     }
 
@@ -166,11 +168,10 @@ class Sort {
         Comparable v = a[lo];
         while (i <= gt) {
             int cmp = a[i].compareTo(v);
-            if (cmp < 0) exch(a, lt++, i++);
-            else if (cmp > 0) exch(a, i, gt--);
-            else i++;
+            if      (cmp < 0)  exch(a, lt++, i++);
+            else if (cmp > 0)  exch(a, i, gt--);
+            else               i++;
         }
-        //exch(a, lo, lt);
         quick3WaySort(a, lo, lt-1);
         quick3WaySort(a, gt+1, hi);
     }
