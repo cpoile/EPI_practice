@@ -149,8 +149,8 @@ class Sort {
         int i = lo;
         int j = hi +1;
         while (true) {
-            while (less(v, a[--j])) if (j == lo) break;
             while (less(a[++i], v)) if (i == hi) break;
+            while (less(v, a[--j])) if (j == lo) break;
             if (j <= i) break;
             exch(a, i, j);
         }

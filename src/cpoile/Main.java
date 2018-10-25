@@ -1,5 +1,7 @@
 package cpoile;
 
+import cpoile.sedgewick.Ch2_1_Sorts;
+import cpoile.sedgewick.Ch2_4_HeapSort;
 import cpoile.sedgewick.Ch2_4_IndexedMinPQ;
 import cpoile.sedgewick.Ch2_4_PriorityQueues;
 
@@ -47,11 +49,13 @@ public class Main {
         FileInputStream is = new FileInputStream(new File("tinyChar.txt"));
         System.setIn(is);
         //Ch2_1_Sorts.main();
+        //Ch2_4_HeapSort.main();
         /*is = new FileInputStream(new File("tinyTale.txt"));
         System.setIn(is);
         Ch2_1_Sorts.main();*/
 
         //Ch2_4_PriorityQueues.sort();
         Ch2_4_IndexedMinPQ.main();
+
     }
 }
