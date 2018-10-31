@@ -9,7 +9,7 @@ import java.io.FileNotFoundException;
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
 
-        Ch1_1_BinarySearch.main();
+        //Ch1_1_BinarySearch.main();
         //        Ex0_01.main();
         //Ex02_01.main();
         //Ch1_3_Stack.main();
@@ -47,5 +47,6 @@ public class Main {
         //Ch2_4_PriorityQueues.sort();
         //Ch2_4_IndexedMinPQ.main();
 
+        Ch3_1_SymbolTables.main();
     }
 }
