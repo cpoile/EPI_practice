@@ -11,7 +11,8 @@ public class Ch3_1_SymbolTables {
 
         //OrderedSequentialST<String, Integer> st = new OrderedSequentialST<>();
         //OrderedBinaryST<String, Integer> st = new OrderedBinaryST<>();
-        BinarySearchTree<String, Integer> st = new BinarySearchTree<>();
+        //BinarySearchTree<String, Integer> st = new BinarySearchTree<>();
+        RedBlackBST<String, Integer> st = new RedBlackBST<>();
         for (int i = 0; i < testInput.length; i++) {
             st.put(testInput[i], i);
         }
@@ -30,14 +31,29 @@ public class Ch3_1_SymbolTables {
         System.out.println("floor M: " + st.floor("M") + ", ceiling M: " + st.ceiling("M"));
         System.out.println("floor N: " + st.floor("N") + ", ceiling N: " + st.ceiling("N"));
 
+        System.out.println("Diagram:");
+        st.draw();
+
         System.out.println("min: " + st.min() + ", max: " + st.max());
-        st.delete("C");
-        st.delete("A");
-        st.delete("X");
-        for (String s : st.keys()) {
-            System.out.println(s + ": " + st.get(s));
+//        st.delete("C");
+//        st.delete("A");
+//        st.delete("X");
+//        for (String s : st.keys()) {
+//            System.out.println(s + ": " + st.get(s));
+//        }
+//        System.out.println("floor A: " + st.floor("A") + ", ceiling A: " + st.ceiling("A"));
+//
+//        System.out.println("Diagram:");
+//        st.draw();
+
+        System.out.println("/nNow inserting in sorted order:");
+        Arrays.sort(testInput);
+        st = new RedBlackBST<>();
+        for (int i = 0; i < testInput.length; i++) {
+            st.put(testInput[i], i);
         }
-        System.out.println("floor A: " + st.floor("A") + ", ceiling A: " + st.ceiling("A"));
+        st.draw();
+
     }
 }
 
@@ -238,16 +254,27 @@ class OrderedBinaryST<Key extends Comparable<Key>, Value> {
 }
 
 class BinarySearchTree<Key extends Comparable<Key>, Value> {
-    private class Node {
+
+    // Node has color for the RedBlackBST subclass.
+    class Node {
         Key key;
         Value val;
-        Node left, right;
         int N;
+        Node left, right;
+        boolean color;
+        int depth, rank;
 
-        public Node(Key key, Value value, int N) {
-            this.key = key;
-            this.val = value;
-            this.N = N;
+        public Node(Key k, Value val, int n) {
+            this.key = k;
+            this.val = val;
+            this.N = n;
+        }
+
+        public Node(Key k, Value val, int n, boolean color) {
+            this.key = k;
+            this.val = val;
+            this.N = n;
+            this.color = color;
         }
     }
 
@@ -339,12 +366,13 @@ class BinarySearchTree<Key extends Comparable<Key>, Value> {
     }
 
     public Key max() {
+        if (root == null) return null;
         return max(root).key;
     }
 
     private Node max(Node x) {
         if (x.right == null) return x;
-        else return max(x.right);
+        return max(x.right);
     }
 
     public Key select(int rank) {
@@ -427,6 +455,7 @@ class BinarySearchTree<Key extends Comparable<Key>, Value> {
         keys(root, q, lo, hi);
         return q;
     }
+
     public void keys(Node x, Deque q, Key lo, Key hi) {
         if (x == null) return;
         int cmplo = lo.compareTo(x.key);
@@ -434,5 +463,142 @@ class BinarySearchTree<Key extends Comparable<Key>, Value> {
         if (cmplo < 0) keys(x.left, q, lo, hi);
         if (cmplo <= 0 && cmphi >= 0) q.addLast(x.key);
         if (cmphi > 0) keys(x.right, q, lo, hi);
+    }
+
+    class Width {
+        int k = 0, v = 0;
+    }
+
+    public void draw() {
+        System.out.println();
+
+        PriorityQueue<Node> q = new PriorityQueue<>((n1, n2) -> {
+            if (n1.depth < n2.depth) return -1;
+            if (n1.depth > n2.depth) return 1;
+            return Integer.compare(n1.rank, n2.rank);
+        });
+
+
+        Width width = new Width();
+        populateDrawingCoords(root, 1, q, width);
+        int space = width.v + width.v;
+
+        int curLine = 1;
+        int curRank = 0;
+        while (q.peek() != null) {
+            Node x = q.poll();
+            if (x.depth != curLine) {
+                System.out.println();
+                curLine++;
+                curRank = 0;
+            }
+            printWhiteSpaces((x.rank - curRank) * space);
+            printSpaced(x.key + "-" + x.val, space, x.color);
+            curRank = x.rank + 1;
+        }
+        System.out.println();
+        System.out.println();
+    }
+
+    private void populateDrawingCoords(Node x, int depth, PriorityQueue<Node> q, Width width) {
+
+        if (x == null) return;
+        x.depth = depth;
+        x.rank = rank(x.key);
+        q.add(x);
+        populateDrawingCoords(x.left, depth + 1, q, width);
+        populateDrawingCoords(x.right, depth + 1, q, width);
+        width.k = Math.max(width.k, x.key.toString().length());
+        width.v = Math.max(width.v, x.val.toString().length());
+    }
+
+    private void printWhiteSpaces(int x) {
+        for (int i = 0; i < x; i++)
+            System.out.print(" ");
+    }
+
+    protected void printSpaced(String s, int space, boolean printRed) {
+        System.out.print(s);
+        for (int i = space - s.length(); i > 0; i--) {
+            System.out.print(" ");
+        }
+    }
+}
+
+class RedBlackBST<Key extends Comparable<Key>, Value> extends BinarySearchTree<Key, Value> {
+    public static final boolean BLACK = false;
+    public static final boolean RED = true;
+
+    public int size() {
+        return size(root);
+    }
+
+    private int size(Node x) {
+        if (x == null) return 0;
+        return x.N;
+    }
+
+    private boolean isRed(Node x) {
+        if (x == null) return false;
+        return x.color == RED;
+    }
+
+    private Node rotateLeft(Node h) {
+        Node x = h.right;
+        h.right = x.left;
+        x.left = h;
+        x.color = h.color;
+        h.color = RED;
+        x.N = h.N;
+        h.N = size(h.left) + size(h.right) + 1;
+        return x;
+    }
+
+    private Node rotateRight(Node h) {
+        Node x = h.left;
+        h.left = x.right;
+        x.right = h;
+        x.color = h.color;
+        h.color = RED;
+        x.N = h.N;
+        h.N = size(h.left) + size(h.right) + 1;
+        return x;
+    }
+
+    private void flipColors(Node h) {
+        h.left.color = BLACK;
+        h.right.color = BLACK;
+        h.color = RED;
+    }
+
+    public void put(Key key, Value val) {
+        root = put(root, key, val);
+        root.color = BLACK;
+    }
+
+    private Node put(Node h, Key key, Value val) {
+        if (h == null) return new Node(key, val, 1, RED);
+        int cmp = key.compareTo(h.key);
+        if (cmp < 0) h.left = put(h.left, key, val);
+        else if (cmp > 0) h.right = put(h.right, key, val);
+        else h.val = val;
+
+        if (isRed(h.right) && !isRed(h.left)) h = rotateLeft(h);
+        if (isRed(h.left) && isRed(h.left.left)) h = rotateRight(h);
+        if (isRed(h.left) && isRed(h.right)) flipColors(h);
+
+        h.N = size(h.left) + size(h.right) + 1;
+        return h;
+    }
+
+    protected void printSpaced(String s, int space, boolean printRed) {
+        String c = "";
+        if (printRed)
+            c = (char) 27 + "[31m";
+
+        System.out.print(c + s + (char)27 + "[39m");
+        for (int i = space - s.length(); i > 0; i--) {
+            System.out.print(" ");
+        }
     }
 }
