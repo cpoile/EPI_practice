@@ -1,5 +1,7 @@
 package cpoile.sedgewick;
 
+import edu.princeton.cs.algs4.StdRandom;
+
 import java.util.*;
 
 public class Ch2_1_Sorts {
