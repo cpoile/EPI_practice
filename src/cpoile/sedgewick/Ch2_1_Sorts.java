@@ -96,12 +96,10 @@ class Sort {
     }
 
     private static void mergeSort(Comparable[] a, int lo, int hi) {
+        if (hi <= lo) return;
         int mid = lo + (hi - lo) / 2;
-        if (lo < hi - 1) {
-            mergeSort(a, lo, mid);
-            mergeSort(a, mid + 1, hi);
-        }
-        System.out.println("merge (" + lo + ", " + mid + ", " + hi + ")");
+        mergeSort(a, lo, mid);
+        mergeSort(a, mid + 1, hi);
         merge(a, lo, mid, hi);
     }
 
@@ -125,7 +123,7 @@ class Sort {
         int sz = 1;
         while (sz < a.length) {
             for (int lo = 0; lo < a.length - sz; lo += sz * 2) {
-                int mid = lo + sz - 1;
+                int mid = lo + sz-1;
                 int hi = Math.min(a.length - 1, lo + sz * 2 - 1);
                 merge(a, lo, mid, hi);
             }
