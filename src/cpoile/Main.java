@@ -36,8 +36,8 @@ public class Main {
 //        System.setIn(is);
 //        Ch4_1_Graphs.main(new String[]{});
 
-        FileInputStream is = new FileInputStream(new File("tinyChar.txt"));
-        System.setIn(is);
+        // FileInputStream is = new FileInputStream(new File("tinyChar.txt"));
+        // System.setIn(is);
         //Ch2_1_Sorts.main();
         //Ch2_4_HeapSort.main();
         /*is = new FileInputStream(new File("tinyTale.txt"));
@@ -47,9 +47,13 @@ public class Main {
         //Ch2_4_PriorityQueues.sort();
         //Ch2_4_IndexedMinPQ.main();
 
-        Ch3_1_SymbolTables.main();
+        //Ch3_1_SymbolTables.main();
 
         //Ch1_5_UnionFind2.main("tinyUF.txt");
         //Ch1_3_ConvertToBase.main();
+
+        FileInputStream is = new FileInputStream(new File("tinyCG.txt"));
+        System.setIn(is);
+        Ch4_1_UndirectedGraphs.main();
     }
 }

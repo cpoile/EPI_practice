@@ -491,6 +491,7 @@ class BinarySearchTree<Key extends Comparable<Key>, Value> {
         if (cmphi > 0) keys(x.right, q, lo, hi);
     }
 
+    // for drawing
     class Width {
         int k = 0, v = 0;
     }
@@ -631,7 +632,7 @@ class RedBlackBST<Key extends Comparable<Key>, Value> extends BinarySearchTree<K
         return x;
     }
 
-        private Node moveRedLeft(Node h) {
+    private Node moveRedLeft(Node h) {
         flipColors(h);
         if (isRed(h.right.left)) {
             h.right = rotateRight(h.right);

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/*
 class Graph {
     List<Integer>[] adjLists;
     int V, E;
@@ -73,16 +74,17 @@ class DFSSearch {
         System.out.println("connected.");
     }
 }
+*/
 
-public class Ch4_1_Graphs {
+public class Ch4_1_GraphsOld {
     static public void main(String[]... argh) {
-        Graph g = new Graph(System.in);
-        System.out.println(g);
+//        Graph g = new Graph(System.in);
+//        System.out.println(g);
 
-        DFSSearch search = new DFSSearch(g, 0);
-        search.PrintConnected(g, 0);
-        search = new DFSSearch(g, 9);
-        search.PrintConnected(g, 9);
+//        DFSSearch search = new DFSSearch(g, 0);
+//        search.PrintConnected(g, 0);
+//        search = new DFSSearch(g, 9);
+//        search.PrintConnected(g, 9);
 
     }
 }
