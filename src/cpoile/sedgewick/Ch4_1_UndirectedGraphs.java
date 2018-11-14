@@ -12,6 +12,9 @@ public class Ch4_1_UndirectedGraphs {
         searchBFS(g, 0);
         searchBFS(g, 5);
         pathDFS(g, 0);
+        pathBFS(g, 0);
+        ccTest(g);
+        cycleTest(g);
     }
 
     private static void searchDFS(Graph g, int source) {
@@ -23,24 +26,37 @@ public class Ch4_1_UndirectedGraphs {
         }
         if (dfs.count() != g.V())
             System.out.print("NOT ");
-        System.out.println("conneted.\n");
+        System.out.println("connected.\n");
     }
 
     private static void searchBFS(Graph g, int source) {
         System.out.println("BFS search starting from " + source + ". Is connected?");
-        BFS dfs = new BFS(g, source);
+        BFS bfs = new BFS(g, source);
         for (int i = 0; i < g.V(); i++) {
-            if (dfs.marked(i))
+            if (bfs.marked(i))
                 System.out.print(i + " ");
         }
-        if (dfs.count() != g.V())
+        if (bfs.count() != g.V())
             System.out.print("NOT ");
-        System.out.println("conneted.\n");
+        System.out.println("connected.\n");
     }
 
     private static void pathDFS(Graph g, int start) {
         System.out.println("Paths from " + start + " using DFS.");
         PathDFS p = new PathDFS(g, start);
+        for (int v = 0; v < g.V(); v++) {
+            System.out.print(start + " to " + v + ": ");
+            for (int i : p.pathTo(v)) {
+                if (i == start) System.out.print(i);
+                else System.out.print("-" + i);
+            }
+            System.out.println();
+        }
+    }
+
+    private static void pathBFS(Graph g, int start) {
+        System.out.println("Paths from " + start + " using BFS.");
+        PathBFS p = new PathBFS(g, start);
         for (int v = 0; v < g.V(); v++) {
             System.out.print(start + " to " + v + ": ");
             for (int x : p.pathTo(v)) {
@@ -49,6 +65,31 @@ public class Ch4_1_UndirectedGraphs {
             }
             System.out.println();
         }
+    }
+
+    private static void ccTest(Graph g) {
+        CCDFS cc = new CCDFS(g);
+        int M = cc.count();
+        System.out.println();
+        System.out.println(M + " components");
+
+        List<Integer>[] components = (List<Integer>[]) new List[M];
+        for (int i = 0; i < M; i++) {
+            components[i] = new ArrayList<>();
+        }
+        for (int i = 0; i < g.V(); i++) {
+            components[cc.id(i)].add(i);
+        }
+        for (int i = 0; i < M; i++) {
+            System.out.print("Component " + i + ": ");
+            System.out.println(components[i].toString());
+        }
+    }
+
+    private static void cycleTest(Graph g) {
+        Cycle c = new Cycle(g);
+        String s = c.hasCycle() ? "Yes, there is a " : "No ";
+        System.out.println(s + "hasCycle.");
     }
 }
 
@@ -65,7 +106,7 @@ class Graph {
 
     public Graph(Scanner scan) {
         this(scan.nextInt());
-        int e  = scan.nextInt();
+        int e = scan.nextInt();
         for (int i = 0; i < e; i++) {
             addEdge(scan.nextInt(), scan.nextInt());
         }
@@ -109,6 +150,7 @@ class DFS {
         marked = new boolean[g.V()];
         dfs(g, start);
     }
+
     private void dfs(Graph g, int v) {
         marked[v] = true;
         count++;
@@ -117,9 +159,11 @@ class DFS {
                 dfs(g, w);
         }
     }
+
     public int count() {
         return count;
     }
+
     public boolean marked(int i) {
         return marked[i];
     }
@@ -136,6 +180,7 @@ class PathDFS {
         edgeTo = new int[g.V()];
         dfs(g, start);
     }
+
     private void dfs(Graph g, int v) {
         marked[v] = true;
         for (int w : g.adj(v)) {
@@ -145,6 +190,7 @@ class PathDFS {
             }
         }
     }
+
     public Iterable<Integer> pathTo(int v) {
         Deque<Integer> d = new ArrayDeque<>();
         for (int x = v; x != s; x = edgeTo[x])
@@ -161,7 +207,7 @@ class BFS {
     public BFS(Graph g, int start) {
         marked = new boolean[g.V()];
 
-        Deque<Integer> d =  new ArrayDeque<>();
+        Deque<Integer> d = new ArrayDeque<>();
         d.addLast(start);
         while (!d.isEmpty()) {
             int v = d.removeFirst();
@@ -173,21 +219,141 @@ class BFS {
             }
         }
     }
-    public int count() { return count; }
-    public boolean marked(int i) { return marked[i]; }
+
+    public int count() {
+        return count;
+    }
+
+    public boolean marked(int i) {
+        return marked[i];
+    }
 }
 
+class PathBFS {
+    private boolean[] marked;
+    private int[] edgeTo;
+    private int count, s;
 
+    public PathBFS(Graph g, int start) {
+        marked = new boolean[g.V()];
+        edgeTo = new int[g.V()];
+        s = start;
+        bfs(g, s);
+    }
 
+    private void bfs(Graph g, int start) {
+        Deque<Integer> q = new ArrayDeque<>();
+        marked[start] = true;
+        q.addLast(start);
+        while (!q.isEmpty()) {
+            int v = q.removeFirst();
+            for (int w : g.adj(v)) {
+                if (!marked[w]) {
+                    marked[w] = true;
+                    edgeTo[w] = v;
+                    q.addLast(w);
+                }
+            }
+        }
+    }
 
+    public Iterable<Integer> pathTo(int v) {
+        Deque<Integer> q = new ArrayDeque<>();
+        for (int x = v; x != s; x = edgeTo[x]) {
+            q.push(x);
+        }
+        q.push(s);
+        return q;
+    }
+}
 
+class CCDFS {
+    private boolean[] marked;
+    private int[] ccId;  // 0 indexed (between 0 and count-1
+    private int count;
 
+    public CCDFS(Graph g) {
+        marked = new boolean[g.V()];
+        ccId = new int[g.V()];
+        for (int s = 0; s < g.V(); s++) {
+            if (!marked[s]) {
+                dfs(g, s);
+                count++;
+            }
+        }
+    }
 
+    private void dfs(Graph g, int v) {
+        marked[v] = true;
+        ccId[v] = count;
+        for (int w : g.adj(v)) {
+            if (!marked[w])
+                dfs(g, w);
+        }
+    }
 
+    public boolean connected(int v, int w) {
+        return ccId[v] == ccId[w];
+    }
 
+    public int id(int v) {
+        return ccId[v];
+    }
 
+    public int count() { return count; }
+}
 
+class Cycle {
+    private boolean[] marked;
+    private boolean hasCycle;
 
+    public Cycle(Graph g) {
+        marked = new boolean[g.V()];
+        for (int s = 0; s < g.V(); s++) {
+            if (!marked[s])
+                dfs(g, s, s);
+        }
+    }
+
+    private void dfs(Graph g, int v, int u) {
+        marked[v] = true;
+        for (int w : g.adj(v)) {
+            if (!marked[w])
+                dfs(g, w, v);
+            else if (w != u) hasCycle = true;
+        }
+    }
+
+    public boolean hasCycle() { return hasCycle; }
+}
+
+class TwoColor {
+    private boolean[] marked;
+    private boolean[] color;
+    private boolean twoColor = true;
+
+    public TwoColor(Graph g) {
+        marked = new boolean[g.V()];
+        color = new boolean[g.V()];
+        for (int s = 0; s < g.V(); s++) {
+            if (!marked[s])
+                dfs(g, s);
+        }
+    }
+
+    private void dfs(Graph g, int v) {
+        marked[v] = true;
+        for (int w : g.adj(v)) {
+            if (!marked[w]) {
+                color[w] = !color[v];
+                dfs(g, w);
+            } else if (color[w] == color[v])
+                twoColor = false;
+        }
+    }
+
+    public boolean isBipartite() { return twoColor; }
+}
 
 
 

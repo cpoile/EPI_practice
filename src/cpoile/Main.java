@@ -52,8 +52,10 @@ public class Main {
         //Ch1_5_UnionFind2.main("tinyUF.txt");
         //Ch1_3_ConvertToBase.main();
 
-        FileInputStream is = new FileInputStream(new File("tinyCG.txt"));
-        System.setIn(is);
-        Ch4_1_UndirectedGraphs.main();
+        //FileInputStream is = new FileInputStream(new File("tinyG.txt"));
+        //System.setIn(is);
+        //Ch4_1_UndirectedGraphs.main();
+
+        Ch4_1_SymbolGraph.main();
     }
 }
