@@ -76,6 +76,11 @@ public class Ch3_1_SymbolTables {
         st.draw();
         st.runChecks();
 
+        System.out.println("Now deleting max. Size: " + st.size());
+        st.deleteMax();
+        st.draw();
+        st.runChecks();
+
     }
 }
 
@@ -610,6 +615,60 @@ class RedBlackBST<Key extends Comparable<Key>, Value> extends BinarySearchTree<K
         return balance(h);
     }
 
+    public void deleteMax() {
+        if (root == null) return; // and throw
+
+        if (!isRed(root.left) && !isRed(root.right))
+            root.color = RED;
+
+        root = deleteMax(root);
+        if (!isEmpty()) root.color = BLACK;
+    }
+
+    private Node deleteMax(Node h) {
+        if (h.right == null) return h.left;
+
+        if (!isRed(h.right.left))
+            moveRedRight(h);
+
+        h.right = deleteMax(h.right);
+        return balance(h);
+    }
+
+    private Node moveRedLeft(Node h) {
+        flipColors(h);
+        if (isRed(h.right.left)) {
+            h.right = rotateRight(h.right);
+            h = rotateLeft(h);
+            flipColors(h);
+        }
+        return h;
+    }
+
+    private Node moveRedRight(Node h) {
+        flipColors(h);
+        if (isRed(h.left.left)) {
+            h = rotateRight(h);
+            flipColors(h);
+        }
+        return h;
+    }
+
+    private void flipColors(Node h) {
+        h.color = !h.color;
+        h.left.color = !h.left.color;
+        h.right.color = !h.right.color;
+    }
+
+    private Node balance(Node h) {
+        if (isRed(h.right)) h = rotateLeft(h);
+        if (isRed(h.left) && isRed(h.left.left)) h = rotateRight(h);
+        if (isRed(h.left) && isRed(h.right)) flipColors(h);
+
+        h.N = size(h.left) + size(h.right) + 1;
+        return h;
+    }
+
     private Node rotateLeft(Node h) {
         Node x = h.right;
         h.right = x.left;
@@ -632,37 +691,12 @@ class RedBlackBST<Key extends Comparable<Key>, Value> extends BinarySearchTree<K
         return x;
     }
 
-    private Node moveRedLeft(Node h) {
-        flipColors(h);
-        if (isRed(h.right.left)) {
-            h.right = rotateRight(h.right);
-            h = rotateLeft(h);
-            flipColors(h);
-        }
-        return h;
-    }
-
-    private void flipColors(Node h) {
-        h.color = !h.color;
-        h.left.color = !h.left.color;
-        h.right.color = !h.right.color;
-    }
-
-    private Node balance(Node h) {
-        if (isRed(h.right)) h = rotateLeft(h);
-        if (isRed(h.left) && isRed(h.left.left)) h = rotateRight(h);
-        if (isRed(h.left) && isRed(h.right)) flipColors(h);
-
-        h.N = size(h.left) + size(h.right) + 1;
-        return h;
-    }
-
     protected void printSpaced(String s, int space, boolean printRed) {
         String c = "";
         if (printRed)
             c = (char) 27 + "[31m";
 
-        System.out.print(c + s + (char)27 + "[39m");
+        System.out.print(c + s + (char) 27 + "[39m");
         for (int i = space - s.length(); i > 0; i--) {
             System.out.print(" ");
         }
@@ -670,29 +704,34 @@ class RedBlackBST<Key extends Comparable<Key>, Value> extends BinarySearchTree<K
 
     // Checks
     public void runChecks() {
-        assert(isBST());
-        assert(isSizeConsistent());
-        assert(isRankConsistent());
-        assert(is23());
-        assert(isBalanced());
+        assert (isBST());
+        assert (isSizeConsistent());
+        assert (isRankConsistent());
+        assert (is23());
+        assert (isBalanced());
     }
+
     public boolean isBST() {
         return isBST(root, null, null);
     }
+
     private boolean isBST(Node x, Key min, Key max) {
         if (x == null) return true;
         if (min != null && x.key.compareTo(min) <= 0) return false;
         if (max != null && x.key.compareTo(max) >= 0) return false;
         return isBST(x.left, min, x.key) && isBST(x.right, x.key, max);
     }
+
     public boolean isSizeConsistent() {
         return isSizeConsistent(root);
     }
+
     private boolean isSizeConsistent(Node x) {
         if (x == null) return true;
         if (size(x) != size(x.left) + size(x.right) + 1) return false;
         return isSizeConsistent(x.left) && isSizeConsistent(x.right);
     }
+
     public boolean isRankConsistent() {
         for (int i = 0; i < size(); i++) {
             if (i != rank(select(i))) return false;
@@ -702,15 +741,18 @@ class RedBlackBST<Key extends Comparable<Key>, Value> extends BinarySearchTree<K
         }
         return true;
     }
+
     public boolean is23() {
         return is23(root);
     }
+
     private boolean is23(Node x) {
         if (x == null) return true;
         if (isRed(x.right)) return false;
         if (x != root && isRed(x) && isRed(x.left)) return false;
         return is23(x.left) && is23(x.right);
     }
+
     public boolean isBalanced() {
         int black = 0;
         Node x = root;
@@ -720,6 +762,7 @@ class RedBlackBST<Key extends Comparable<Key>, Value> extends BinarySearchTree<K
         }
         return isBalanced(root, black);
     }
+
     private boolean isBalanced(Node x, int black) {
         if (x == null) return black == 0;
         if (!isRed(x)) black--;

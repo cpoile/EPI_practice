@@ -56,6 +56,7 @@ public class Main {
         //System.setIn(is);
         //Ch4_1_UndirectedGraphs.main();
 
-        Ch4_1_SymbolGraph.main();
+        //Ch4_1_SymbolGraph.main();
+        Ch4_2_Digraphs.main();
     }
 }
