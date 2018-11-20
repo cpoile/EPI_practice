@@ -209,13 +209,16 @@ class BFS {
 
         Deque<Integer> d = new ArrayDeque<>();
         d.addLast(start);
+        marked[start] = true;
+        count++;
         while (!d.isEmpty()) {
             int v = d.removeFirst();
-            marked[v] = true;
-            count++;
             for (int w : g.adj(v)) {
-                if (!marked[w])
+                if (!marked[w]) {
+                    marked[v] = true;
+                    count++;
                     d.addLast(w);
+                }
             }
         }
     }

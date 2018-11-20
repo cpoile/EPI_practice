@@ -23,13 +23,13 @@ public class Ch4_1_SymbolGraph {
         DegreesOfSeparation dos = new DegreesOfSeparation(sg, "Bacon, Kevin");
         String dest = "Kidman, Nicole";
         System.out.println(dest);
-        for (String s : dos.pathTo(dest)) {
-            System.out.println("    " + s);
+        for (int s : dos.pathTo(dos.sg.index(dest))) {
+            System.out.println("    " + dos.sg.name(s));
         }
         dest = "Grant, Cary";
         System.out.println(dest);
-        for (String s : dos.pathTo(dest)) {
-            System.out.println("    " + s);
+        for (int s : dos.pathTo(dos.sg.index(dest))) {
+            System.out.println("    " + dos.sg.name(s));
         }
     }
 }
@@ -81,41 +81,66 @@ class SymbolGraph {
     }
 }
 
+class SymbolDigraph {
+    private Map<String, Integer> st;
+    private String[] keys;
+    private Digraph g;
+
+    public SymbolDigraph(String filename, String delim) throws FileNotFoundException {
+        Scanner scan = new Scanner(new File(filename));
+        st = new HashMap<>();
+        while (scan.hasNextLine()) {
+            for (String s : scan.nextLine().split(delim)) {
+                if (!st.containsKey(s))
+                    st.put(s, st.size());
+            }
+        }
+
+        keys = new String[st.size()];
+        for (String s : st.keySet())
+            keys[st.get(s)] = s;
+        g = new Digraph(st.size());
+
+        scan = new Scanner(new File(filename));
+        while (scan.hasNextLine()) {
+            String[] line = scan.nextLine().split(delim);
+            int v = st.get(line[0]);
+            for (int i = 1; i < line.length; i++) {
+                g.addEdge(v, st.get(line[i]));
+            }
+        }
+    }
+
+    public boolean contains(String s) {
+        return st.containsKey(s);
+    }
+
+    public int index(String key) {
+        return st.get(key);
+    }
+
+    public String name(int v) {
+        return keys[v];
+    }
+
+    public Digraph G() {
+        return g;
+    }
+}
+
 class DegreesOfSeparation {
     SymbolGraph sg;
-    private boolean[] marked;
-    private int[] edgeTo;
     int s;
+    PathBFS p;
 
     public DegreesOfSeparation(SymbolGraph symbolGraph, String start) {
         // do a BFS to find every node's connection to 'start' (if there is a connection
         sg = symbolGraph;
         Graph g = sg.G();
-        marked = new boolean[g.V()];
-        edgeTo = new int[g.V()];
-        Deque<Integer> d = new ArrayDeque<>();
         s = sg.index(start);
-        d.addLast(s);
-        edgeTo[s] = s;
-        while (!d.isEmpty()) {
-            int v = d.removeFirst();
-            marked[v] = true;
-            for (int w : g.adj(v)) {
-                if (!marked[w]) {
-                    marked[w] = true;
-                    edgeTo[w] = v;
-                    d.addLast(w);
-                }
-            }
-        }
+        p = new PathBFS(g, s);
     }
-    public Iterable<String> pathTo(String dest) {
-        Deque<String> d = new ArrayDeque<>();
-        int v = sg.index(dest);
-        for (int x = v; x != s; x = edgeTo[x]) {
-            d.push(sg.name(x));
-        }
-        d.push(sg.name(s));
-        return d;
+    public Iterable<Integer> pathTo(int v) {
+        return p.pathTo(v);
     }
 }
