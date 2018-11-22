@@ -42,14 +42,18 @@ class IndexedMinPQ<Item extends Comparable<Item>> {
     Item[] keys;
     int[] pq;  // position i in queue is held by this keyindex
     int[] qp;  // i (keyindex)'s position in the queue (pq)
-    int N;
+    int N, maxN;
+
     public IndexedMinPQ() {
         this(32);
     }
-    public IndexedMinPQ(int n) {
-        keys = (Item[]) new Comparable[n];
-        pq = new int[n];
-        qp = new int[n];
+    public IndexedMinPQ(int maxN) {
+        this.maxN = maxN;
+        keys = (Item[]) new Comparable[maxN];
+        pq = new int[maxN];
+        qp = new int[maxN];
+        for (int i = 0; i < maxN; i++)
+            qp[i] = -1;
     }
     public IndexedMinPQ(Item[] a) {
         this(a.length + 1);
@@ -63,7 +67,8 @@ class IndexedMinPQ<Item extends Comparable<Item>> {
         return pq[1];
     }
     public boolean contains(int i) {
-        return i < N && i >= 0 && qp[i] != -1;
+        if (i < 0 || i >= maxN) throw new IllegalArgumentException();
+        return qp[i] != -1;
     }
     public boolean isEmpty() {
         return N == 0;

@@ -57,6 +57,7 @@ public class Main {
         //Ch4_1_UndirectedGraphs.main();
 
         //Ch4_1_SymbolGraph.main();
-        Ch4_2_Digraphs.main();
+        //Ch4_2_Digraphs.main();
+        Ch4_3_MinimumSpanningTrees.main();
     }
 }
