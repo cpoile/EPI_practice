@@ -58,6 +58,7 @@ public class Main {
 
         //Ch4_1_SymbolGraph.main();
         //Ch4_2_Digraphs.main();
-        Ch4_3_MinimumSpanningTrees.main();
+        //Ch4_3_MinimumSpanningTrees.main();
+        Ch4_4_ShortestPaths.main();
     }
 }

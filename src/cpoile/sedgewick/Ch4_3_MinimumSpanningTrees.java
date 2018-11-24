@@ -198,7 +198,13 @@ class EagerPrimMST {
     }
 
     public Iterable<Edge> edges() {
-        return Arrays.asList(edgeTo);
+        //return Arrays.asList(edgeTo);
+        List<Edge> ret = new ArrayList<>();
+        for (int i = 0; i < edgeTo.length; i++) {
+            if (edgeTo[i] != null)
+                ret.add(edgeTo[i]);
+        }
+        return ret;
     }
 
     public double weight() {

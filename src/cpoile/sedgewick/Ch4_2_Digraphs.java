@@ -179,6 +179,35 @@ class DepthFirstOrder {
     public Iterable<Integer> reversePost() { return revPostOrder; }
 }
 
+class DepthFirstOrderEWD {
+    private boolean[] marked;
+    private Deque<Integer> preOrder, postOrder, revPostOrder;
+
+    public DepthFirstOrderEWD(EdgeWeightedDigraph g) {
+        preOrder = new ArrayDeque<>();
+        postOrder = new ArrayDeque<>();
+        revPostOrder = new ArrayDeque<>();
+        marked = new boolean[g.V()];
+
+        for (int s = 0; s < g.V(); s++)
+            if (!marked[s]) dfs(g, s);
+    }
+
+    private void dfs(EdgeWeightedDigraph g, int v) {
+        marked[v] = true;
+        preOrder.addLast(v);
+        for (DirectedEdge w : g.adj(v)) {
+            if (!marked[w.to()])
+                dfs(g, w.to());
+        }
+        postOrder.addLast(v);
+        revPostOrder.push(v);
+    }
+    public Iterable<Integer> pre() { return preOrder; }
+    public Iterable<Integer> post() { return postOrder; }
+    public Iterable<Integer> reversePost() { return revPostOrder; }
+}
+
 class Topological {
     Iterable<Integer> order;
     public Topological(Digraph g) {
