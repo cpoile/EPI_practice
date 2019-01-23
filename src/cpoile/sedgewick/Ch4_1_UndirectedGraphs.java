@@ -215,7 +215,7 @@ class BFS {
             int v = d.removeFirst();
             for (int w : g.adj(v)) {
                 if (!marked[w]) {
-                    marked[v] = true;
+                    marked[w] = true;
                     count++;
                     d.addLast(w);
                 }

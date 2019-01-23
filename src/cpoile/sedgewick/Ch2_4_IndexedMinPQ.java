@@ -76,40 +76,36 @@ class IndexedMinPQ<Item extends Comparable<Item>> {
     public int size() {
         return N;
     }
-    public void insert(int k, Item v) {
+    public void insert(int k, Item item) {
         // do checks, index is in range, we don't already have that index
         N++;
-        keys[k] = v;
+        keys[k] = item;
         pq[N] = k;
         qp[k] = N;
         swim(N);
     }
-    public void change(int i, Item k) {
+    public void change(int k, Item item) {
         // do checks, index is in range
-        keys[i] = k;
-        swim(qp[i]);
-        sink(qp[i]);
+        keys[k] = item;
+        swim(qp[k]);
+        sink(qp[k]);
     }
-    public void delete(int i) {
-        if (i < 0 || i >= N || !contains(i))
+    public void delete(int k) {
+        if (k < 0 || k >= maxN || !contains(k))
             return;    // put real exception throwing here.
-        int idx = qp[i];
+        int idx = qp[k];
         exch(idx, N--);
         swim(idx);
         sink(idx);
 
-        keys[i] = null;
-        qp[i] = -1;
+        keys[k] = null;
+        qp[k] = -1;
         pq[N+1] = 0; // not needed (will be overridden when we add more)
     }
     public int delMin() {
         // check if n == 0, if so then throw exception
         int idx = pq[1];
-        exch(1, N--);
-        sink(1);
-        keys[idx] = null;
-        qp[idx] = -1;
-
+        delete(idx);
         return idx;
     }
     private boolean greater(int i, int j) {

@@ -108,8 +108,11 @@ class EdgeWeightedDigraph {
         sb.append(V).append(" vertices, ").append(E).append(" edges:\n");
         for (int v = 0; v < V; v++) {
             sb.append(v).append(": ");
-            for (DirectedEdge e : adj(v))
-                sb.append(e).append(", ");
+            String sep = "";
+            for (DirectedEdge e : adj(v)) {
+                sb.append(sep).append(e);
+                sep = ", ";
+            }
             sb.append("\n");
         }
         return sb.toString();

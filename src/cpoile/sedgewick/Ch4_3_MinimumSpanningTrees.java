@@ -176,7 +176,7 @@ class EagerPrimMST {
             distTo[i] = Double.POSITIVE_INFINITY;
 
         distTo[0] = 0.0;
-        visit(g, 0);
+        pq.insert(0, distTo[0]);
         while (!pq.isEmpty())
             visit(g, pq.delMin());
     }
@@ -186,13 +186,11 @@ class EagerPrimMST {
         for (Edge e : g.adj(v)) {
             int w = e.other(v);
             if (marked[w]) continue;
-            if (e.weight() < distTo[w]) {
+            if (distTo[w] > e.weight()) {
                 distTo[w] = e.weight();
                 edgeTo[w] = e;
-                if (pq.contains(w))
-                    pq.change(w, distTo[w]);
-                else
-                    pq.insert(w, distTo[w]);
+                if (pq.contains(w)) pq.change(w, distTo[w]);
+                else                pq.insert(w, distTo[w]);
             }
         }
     }
