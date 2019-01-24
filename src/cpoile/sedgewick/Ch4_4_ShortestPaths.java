@@ -28,6 +28,39 @@ public class Ch4_4_ShortestPaths {
             System.out.println();
         }
 
+        System.out.println("\nShortest path of a EWD with negative weights (no negative cycles) using Bellman-Ford:");
+        ewd = new EdgeWeightedDigraph(new Scanner(new File("tinyEWDn.txt")));
+        s = 0;
+        BellmanFordSP bfsp = new BellmanFordSP(ewd, s);
+        for (int v = 0; v < ewd.V(); v++) {
+            System.out.print(String.format("%d to %d: (%.2f) ", s, v, bfsp.distTo(v)));
+            for (DirectedEdge e : bfsp.pathTo(v)) {
+                System.out.print(e + " ");
+            }
+            System.out.println();
+        }
+
+        System.out.println("\nShortest path of an EWD that has a negative cycle:");
+        ewd = new EdgeWeightedDigraph(new Scanner(new File("tinyEWDnc.txt")));
+        s = 0;
+        bfsp = new BellmanFordSP(ewd, s);
+        if (bfsp.hasNegativeCycle()) {
+            System.out.printf("Has cycle? %b\nCycle: ", bfsp.hasNegativeCycle());
+            double sum = 0.0;
+            for (DirectedEdge e : bfsp.negativeCycle()) {
+                System.out.print(e + " ");
+                sum += e.weight();
+            }
+            System.out.print(" weight of cycle: " + sum + "\n");
+        } else {
+            for (int v = 0; v < ewd.V(); v++) {
+                System.out.print(String.format("%d to %d: (%.2f) ", s, v, bfsp.distTo(v)));
+                for (DirectedEdge e : bfsp.pathTo(v)) {
+                    System.out.print(e + " ");
+                }
+                System.out.println();
+            }
+        }
     }
 }
 
@@ -85,7 +118,7 @@ class EdgeWeightedDigraph {
         return E;
     }
 
-    private void addEdge(DirectedEdge e) {
+    public void addEdge(DirectedEdge e) {
         adj[e.from()].add(e);
         E++;
     }
@@ -135,7 +168,6 @@ class DijkstraSP {
 
         distTo[s] = 0.0;
         pq.insert(s, distTo[s]);
-        // or use a deque: d.addLast(s);
         while (!pq.isEmpty())
             relax(g, pq.delMin());  // or d.remove()
     }
@@ -147,8 +179,7 @@ class DijkstraSP {
                 distTo[w] = distTo[v] + e.weight();
                 edgeTo[w] = e;
                 if (pq.contains(w)) pq.change(w, distTo[w]);
-                else                pq.insert(w, distTo[w]);
-                // or, if using a queue: d.addLast(w);
+                else pq.insert(w, distTo[w]);
             }
         }
     }
@@ -196,9 +227,13 @@ class AcyclicSP {
         }
     }
 
-    public double distTo(int v) { return distTo[v]; }
+    public double distTo(int v) {
+        return distTo[v];
+    }
 
-    public boolean hasPath(int v) { return distTo[v] < Double.POSITIVE_INFINITY; }
+    public boolean hasPath(int v) {
+        return distTo[v] < Double.POSITIVE_INFINITY;
+    }
 
     public Iterable<DirectedEdge> pathTo(int v) {
         if (!hasPath(v)) return null;
@@ -206,5 +241,135 @@ class AcyclicSP {
         for (DirectedEdge x = edgeTo[v]; x != null; x = edgeTo[x.from()])
             d.push(x);
         return d;
+    }
+}
+
+class BellmanFordSP {
+    private DirectedEdge[] edgeTo;
+    private double[] distTo;
+    private boolean[] onQ;
+    private Deque<Integer> q;
+    private int cost;
+    private Iterable<DirectedEdge> cycle;
+
+    public BellmanFordSP(EdgeWeightedDigraph g, int start) {
+        edgeTo = new DirectedEdge[g.V()];
+        onQ = new boolean[g.V()];
+        q = new ArrayDeque<>();
+        distTo = new double[g.V()];
+        for (int i = 0; i < g.V(); i++) {
+            distTo[i] = Double.POSITIVE_INFINITY;
+        }
+        distTo[start] = 0.0;
+        q.addLast(start);
+        onQ[start] = true;
+
+        while (!q.isEmpty() && !this.hasNegativeCycle()) {
+            int v = q.removeFirst();
+            onQ[v] = false;
+            relax(g, v);
+        }
+    }
+
+    private void relax(EdgeWeightedDigraph g, int v) {
+        for (DirectedEdge e : g.adj(v)) {
+            int w = e.to();
+            if (distTo[w] > distTo[v] + e.weight()) {
+                distTo[w] = distTo[v] + e.weight();
+                edgeTo[w] = e;
+                if (!onQ[w]) {
+                    q.addLast(w);
+                    onQ[w] = true;
+                }
+            }
+            if (cost++ % g.V() == 0) {
+                findNegativeCycle();
+                if (hasNegativeCycle()) return;
+            }
+        }
+    }
+
+    private void findNegativeCycle() {
+        EdgeWeightedDigraph ewd = new EdgeWeightedDigraph(edgeTo.length);
+        for (DirectedEdge e : edgeTo) {
+            if (e != null)
+                ewd.addEdge(e);
+        }
+        EdgeWeightedCycleFinder cf = new EdgeWeightedCycleFinder(ewd);
+        cycle = cf.cycle();
+    }
+
+    public boolean hasNegativeCycle() {
+        return cycle != null;
+    }
+
+    public Iterable<DirectedEdge> negativeCycle() {
+        return cycle;
+    }
+
+    public double distTo(int v) {
+        return distTo[v];
+    }
+
+    private boolean hasPath(int v) {
+        return distTo[v] < Double.POSITIVE_INFINITY;
+    }
+
+    public Iterable<DirectedEdge> pathTo(int v) {
+        if (!hasPath(v)) return null;
+        Deque<DirectedEdge> d = new ArrayDeque<>();
+        for (DirectedEdge e = edgeTo[v]; e != null; e = edgeTo[e.from()]) {
+            d.push(e);
+        }
+        return d;
+    }
+}
+
+class EdgeWeightedCycleFinder {
+    private boolean[] marked;
+    private DirectedEdge[] edgeTo;
+    private Deque<DirectedEdge> cycle;
+    private boolean[] onStack;
+
+    public EdgeWeightedCycleFinder(EdgeWeightedDigraph g) {
+        marked = new boolean[g.V()];
+        edgeTo = new DirectedEdge[g.V()];
+        onStack = new boolean[g.V()];
+        for (int s = 0; s < g.V(); s++) {
+            if (!marked[s])
+                dfs(g, s);
+        }
+    }
+
+    private void dfs(EdgeWeightedDigraph g, int v) {
+        marked[v] = true;
+        onStack[v] = true;
+        for (DirectedEdge e : g.adj(v)) {
+            int w = e.to();
+            if (this.hasCycle()) {
+                return;
+            } else if (!marked[w]) {
+                edgeTo[w] = e;
+                dfs(g, w);
+            } else if (onStack[w]) {
+                cycle = new ArrayDeque<>();
+                DirectedEdge x = e;
+                while (x.from() != w) {
+                    cycle.push(x);
+                    x = edgeTo[x.from()];
+                }
+                cycle.push(x);
+                return;
+            }
+        }
+        onStack[v] = false;
+    }
+
+    public Iterable<DirectedEdge> cycle() {
+        return this.cycle;
+    }
+
+    private boolean hasCycle() {
+        return this.cycle != null;
     }
 }
