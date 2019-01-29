@@ -16,6 +16,10 @@ public class Ch5_1_StringSorts {
         MSDSort.sort(copy);
 
         assert (Arrays.equals(copy, expected));
+
+        copy = Arrays.copyOf(input, input.length);
+        Quick3String.sort(copy);
+        assert (Arrays.equals(copy, expected));
     }
 
     public static void LSDSort(String[] a, int W) {
@@ -103,5 +107,43 @@ class MSDSort {
         String temp = a[i];
         a[i] = a[j];
         a[j] = temp;
+    }
+}
+
+class Quick3String {
+    private static int charAt(String a, int d) {
+        if (d < a.length()) return a.charAt(d);
+        else return -1;
+    }
+
+    public static void sort(String[] a) {
+        // optional: shuffle or move a random element to 0 to be the pivot
+        sort(a, 0, a.length - 1, 0);
+    }
+
+    private static void sort(String[] a, int lo, int hi, int d) {
+        // optional: use insertion sort for short arrays, eg: if (hi <= lo + M)
+        if (hi <= lo) return;
+
+        int lt = lo, gt = hi;
+        int i = lo + 1;
+        int v = charAt(a[lo], d);
+
+        while (i <= gt) {
+            int t = charAt(a[i], d);
+            if      (t < v) exch(a, lt++, i++);
+            else if (t > v) exch(a, i, gt--);
+            else    i++;
+        }
+
+        sort(a, lo, lt - 1, d);
+        if (v >= 0) sort(a, lt, gt, d + 1);
+        sort(a, gt + 1, hi, d);
+    }
+
+    private static void exch(String[] a, int i, int j) {
+        String tmp = a[i];
+        a[i] = a[j];
+        a[j] = tmp;
     }
 }

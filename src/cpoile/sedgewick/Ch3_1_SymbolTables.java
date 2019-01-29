@@ -324,12 +324,22 @@ class BinarySearchTree<Key extends Comparable<Key>, Value> {
         return get(root, key);
     }
 
+//    private Value get(Node x, Key key) {
+//        if (x == null) return null;
+//        int cmp = key.compareTo(x.key);
+//        if (cmp < 0) return get(x.left, key);
+//        else if (cmp > 0) return get(x.right, key);
+//        else return x.val;
+//    }
+
     private Value get(Node x, Key key) {
-        if (x == null) return null;
-        int cmp = key.compareTo(x.key);
-        if (cmp < 0) return get(x.left, key);
-        else if (cmp > 0) return get(x.right, key);
-        else return x.val;
+        while (x != null) {
+            int cmp = key.compareTo(x.key);
+            if      (cmp < 0) x = x.left;
+            else if (cmp > 0) x = x.right;
+            else              return x.val;
+        }
+        return null;
     }
 
     public void put(Key key, Value val) {

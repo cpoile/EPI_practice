@@ -61,6 +61,7 @@ public class Main {
         //Ch4_3_MinimumSpanningTrees.main();
         //Ch4_4_ShortestPaths.main();
 
-        Ch5_1_StringSorts.main();
+        //Ch5_1_StringSorts.main();
+        Ch5_2_Tries.main();
     }
 }
