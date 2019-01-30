@@ -1,5 +1,7 @@
 package cpoile.sedgewick;
 
+import java.util.*;
+
 public class Ch5_2_Tries {
     public static void main() {
         String[] ins = new String[]{"she", "sells", "sea", "shells", "by", "the", "sea", "shore"};
@@ -16,8 +18,21 @@ public class Ch5_2_Tries {
         assert(trie.get("by") == 4);
         assert(trie.get("the") == 5);
         assert(trie.get("shore") == 7);
-    }
 
+        List<String> res = new ArrayList<>();
+        trie.keys().forEach(res::add);
+
+        List<String> expected = Arrays.asList("she", "sells", "sea", "shells", "by", "the", "shore");
+
+        assert(new HashSet<>(res).equals(new HashSet<>(expected)));
+
+        expected = Arrays.asList("she", "shells", "shore");
+        List<String> res2 = new ArrayList<>();
+        trie.keysWithPrefix("sh").forEach(res2::add);
+        assert(new HashSet<>(res2).equals(new HashSet<>(expected)));
+
+
+    }
 }
 
 class Trie<Value> {
@@ -56,4 +71,22 @@ class Trie<Value> {
         x.next[c] = put(x.next[c], key, val, d + 1);
         return x;
     }
+
+    public Iterable<String> keys() {
+        return keysWithPrefix("");
+    }
+
+    public Iterable<String> keysWithPrefix(String pre) {
+        Deque<String> q = new ArrayDeque<>();
+        collect(get(root, pre, 0), pre, q);
+        return q;
+    }
+    private void collect(Node x, String pre, Deque<String> q) {
+        if (x == null) return;
+        if (x.val != null) q.addLast(pre);
+        for (char c = 0; c < R; c++) {
+            collect(x.next[c], pre + c, q);
+        }
+    }
+
 }

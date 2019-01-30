@@ -167,25 +167,24 @@ SELECT * FROM pet;
 DELETE FROM person WHERE id IN (
   SELECT person_id FROM person_pet, pet
   WHERE pet_id = pet.id
-    AND person_id = person.id
     AND dead = true
 );
 
 -- remove dead pets from the person_pet relationship
-SELECT * FROM person_pet
-SELECT * FROM pet
+SELECT * FROM person_pet;
+SELECT * FROM pet;
 DELETE FROM person_pet WHERE pet_id IN (
   SELECT id FROM pet WHERE dead = true
 );
 
 -- change the breed of Scooter to short haired furball
-SELECT * FROM pet
+SELECT * FROM pet;
 UPDATE pet SET breed = 'short haired furball'
   WHERE name = 'scooter';
 SELECT * FROM pet;
 
 -- change the name of any dead animals to deceased
-SELECT * FROM pet
+SELECT * FROM pet;
 UPDATE pet SET name = 'DECEASED'
   WHERE dead = true;
 
