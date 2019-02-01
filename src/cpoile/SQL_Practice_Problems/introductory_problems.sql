@@ -55,3 +55,30 @@ SELECT FirstName, LastName, Title, date(BirthDate) as DateOnlyBirthDate
   FROM EMPLOYEES
   ORDER BY BirthDate;
 
+-- 12
+SELECT FirstName, LastName, CONCAT(FirstName, ' ', LastName) as Fullname
+  FROM Employees;
+
+-- 13
+SELECT OrderID, ProductID, ROUND(UnitPrice, 2) as UnitPrice,
+       Quantity, Round(UnitPrice * Quantity, 2) as TotalPrice
+  FROM `Order Details`;
+
+-- 14
+SELECT COUNT(*) as TotalCustomers
+  FROM Customers;
+
+-- 15
+SELECT MIN(OrderDate) as FirstOrder
+  FROM Orders;
+
+-- 16
+SELECT DISTINCT Country
+  FROM Customers
+  WHERE Country IS NOT NULL;
+
+SELECT Country
+  FROM Customers
+  WHERE Country IS NOT NULL
+  GROUP BY Country;
+

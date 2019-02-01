@@ -69,6 +69,15 @@ public class Ch5_2_Tries {
         assert (tst.get("the") == 5);
         assert (tst.get("shore") == 7);
         assert (tst.get("surely") == 8);
+
+//        ins = new String[]{"she", "bug", "shell", "try", "shore", "shells"};
+//        tst = new TST<>();
+//        for (int i = 0; i < ins.length; i++) {
+//            tst.put(ins[i], i);
+//        }
+//        assert (tst.get("shell") == 2);
+//        tst.delete("shell");
+//        assert (tst.get("shell") == null);
     }
 }
 
@@ -199,10 +208,10 @@ class TST<Value> {
     private Node get(Node x, String key, int d) {
         if (x == null) return null;
         char c = key.charAt(d);
-        if      (c < x.c) return get(x.left, key, d);
+        if (c < x.c) return get(x.left, key, d);
         else if (c > x.c) return get(x.right, key, d);
         else if (d < key.length() - 1)
-            return get(x.mid, key, d+1);
+            return get(x.mid, key, d + 1);
         else return x;
     }
 
@@ -212,11 +221,14 @@ class TST<Value> {
 
     private Node put(Node x, String key, Value val, int d) {
         char c = key.charAt(d);
-        if (x == null) { x = new Node(); x.c = c; }
-        if      (c < x.c) x.left  = put(x.left, key, val, d);
+        if (x == null) {
+            x = new Node();
+            x.c = c;
+        }
+        if (c < x.c) x.left = put(x.left, key, val, d);
         else if (c > x.c) x.right = put(x.right, key, val, d);
         else if (d < key.length() - 1)
-                          x.mid   = put(x.mid, key, val, d+1);
+            x.mid = put(x.mid, key, val, d + 1);
         else x.val = val;
         return x;
     }
