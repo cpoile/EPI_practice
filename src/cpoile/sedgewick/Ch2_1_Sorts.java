@@ -79,8 +79,8 @@ class Sort {
         while (h >= 1) {
             // h sort the array
             for (int i = h; i < N; i++) {
-                for (int j = i; j >= h; j -= h) {
-                     if (less(a[j], a[j - h])) exch(a, j, j - h);
+                for (int j = i; j >= h && less(a[j], a[j - h]); j -= h) {
+                    exch(a, j, j - h);
                 }
             }
             h /= 3;
@@ -107,14 +107,14 @@ class Sort {
         //for (int i = lo; i <= hi; i++)
         //    aux[i] = a[i];
         // or:
-        System.arraycopy(a, lo, aux, lo, hi-lo+1);
+        System.arraycopy(a, lo, aux, lo, hi - lo + 1);
         int i = lo;
         int j = mid + 1;  // counter for second half
         for (int k = i; k <= hi; k++) {
-            if       (i > mid)              a[k] = aux[j++];  // finished first half
-            else if  (j > hi)               a[k] = aux[i++]; // finished second half
-            else if  (less(aux[i], aux[j])) a[k] = aux[i++];
-            else                            a[k] = aux[j++];
+            if (i > mid) a[k] = aux[j++];  // finished first half
+            else if (j > hi) a[k] = aux[i++]; // finished second half
+            else if (less(aux[i], aux[j])) a[k] = aux[i++];
+            else a[k] = aux[j++];
         }
     }
 
@@ -123,7 +123,7 @@ class Sort {
         int sz = 1;
         while (sz < a.length) {
             for (int lo = 0; lo < a.length - sz; lo += sz * 2) {
-                int mid = lo + sz-1;
+                int mid = lo + sz - 1;
                 int hi = Math.min(a.length - 1, lo + sz * 2 - 1);
                 merge(a, lo, mid, hi);
             }
@@ -134,20 +134,20 @@ class Sort {
 
     private static void quickSort(Comparable[] a) {
         StdRandom.shuffle(a);
-        quickSort(a, 0, a.length-1);
+        quickSort(a, 0, a.length - 1);
     }
 
     private static void quickSort(Comparable[] a, int lo, int hi) {
         if (hi <= lo) return;
         int j = partition(a, lo, hi);
-        quickSort(a, lo, j-1);
-        quickSort(a, j+1, hi);
+        quickSort(a, lo, j - 1);
+        quickSort(a, j + 1, hi);
     }
 
     private static int partition(Comparable[] a, int lo, int hi) {
         Comparable v = a[lo];
         int i = lo;
-        int j = hi +1;
+        int j = hi + 1;
         while (true) {
             while (less(a[++i], v)) if (i == hi) break;
             while (less(v, a[--j])) if (j == lo) break;
@@ -160,20 +160,21 @@ class Sort {
 
     private static void quick3WaySort(Comparable[] a) {
         StdRandom.shuffle(a);
-        quick3WaySort(a, 0, a.length-1);
+        quick3WaySort(a, 0, a.length - 1);
     }
+
     private static void quick3WaySort(Comparable[] a, int lo, int hi) {
         if (hi <= lo) return;
-        int lt = lo, gt = hi, i = lo+1;
+        int lt = lo, gt = hi, i = lo + 1;
         Comparable v = a[lo];
         while (i <= gt) {
             int cmp = a[i].compareTo(v);
-            if      (cmp < 0)  exch(a, lt++, i++);
-            else if (cmp > 0)  exch(a, i, gt--);
-            else               i++;
+            if (cmp < 0) exch(a, lt++, i++);
+            else if (cmp > 0) exch(a, i, gt--);
+            else i++;
         }
-        quick3WaySort(a, lo, lt-1);
-        quick3WaySort(a, gt+1, hi);
+        quick3WaySort(a, lo, lt - 1);
+        quick3WaySort(a, gt + 1, hi);
     }
 
     // Supporting functions
@@ -213,17 +214,19 @@ class Sort {
 
     private static void quickSort1(Comparable[] a) {
         StdRandom.shuffle(a);
-        quickSort(a, 0, a.length-1);
+        quickSort(a, 0, a.length - 1);
     }
+
     private static void quickSort1(Comparable[] a, int lo, int hi) {
         if (hi <= lo) return;
         int j = partition(a, lo, hi);
         quickSort(a, 0, j - 1);
         quickSort(a, j + 1, hi);
     }
+
     private static int partition1(Comparable[] a, int lo, int hi) {
         Comparable v = a[lo];
-        int i = lo, j = hi+1;
+        int i = lo, j = hi + 1;
         while (true) {
             while (less(a[++i], v)) if (i == hi) break;
             while (less(v, a[--j])) if (j == lo) break;
@@ -233,6 +236,7 @@ class Sort {
         exch(a, lo, j);
         return j;
     }
+
     static boolean isSorted(Comparable[] a) {
         for (int i = 0; i < a.length - 1; i++) {
             if (less(a[i + 1], a[i])) return false;

@@ -60,8 +60,11 @@ SELECT FirstName, LastName, CONCAT(FirstName, ' ', LastName) as Fullname
   FROM Employees;
 
 -- 13
-SELECT OrderID, ProductID, ROUND(UnitPrice, 2) as UnitPrice,
-       Quantity, Round(UnitPrice * Quantity, 2) as TotalPrice
+SELECT OrderID,
+       ProductID,
+       ROUND(UnitPrice, 2)            as UnitPrice,
+       Quantity,
+       Round(UnitPrice * Quantity, 2) as TotalPrice
   FROM `Order Details`;
 
 -- 14
@@ -82,3 +85,29 @@ SELECT Country
   WHERE Country IS NOT NULL
   GROUP BY Country;
 
+-- 17
+SELECT ContactTitle, COUNT(*) as TotalContactTitle
+  FROM Customers
+  GROUP BY ContactTitle
+  ORDER BY TotalContactTitle DESC;
+
+-- 18
+SELECT ProductID, ProductName, CompanyName
+  FROM Products as p
+         INNER JOIN Suppliers as s
+                    ON p.SupplierID = s.SupplierID
+  ORDER BY ProductID;
+
+-- 19
+SELECT OrderID, DATE(OrderDate) as OrderDate, CompanyName as Shipper
+  FROM Orders as o
+         JOIN Shippers as s ON o.ShipVia = s.ShipperID
+  WHERE OrderID < 10300
+  ORDER BY OrderID;
+
+-- 20
+SELECT CategoryName, COUNT(*) as TotalProducts
+  FROM Products as p
+         JOIN Categories as c ON p.CategoryID = c.CategoryID
+  GROUP BY CategoryName
+  ORDER BY TotalProducts DESC;
