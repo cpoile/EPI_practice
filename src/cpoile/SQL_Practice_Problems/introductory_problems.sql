@@ -111,3 +111,34 @@ SELECT CategoryName, COUNT(*) as TotalProducts
          JOIN Categories as c ON p.CategoryID = c.CategoryID
   GROUP BY CategoryName
   ORDER BY TotalProducts DESC;
+
+-- 21
+SELECT Country, City, COUNT(*) as TotalCustomer
+  FROM Customers
+  GROUP BY Country, City
+  ORDER BY TOtalCustomer DESC;
+
+-- 22
+SELECT ProductID, ProductName, UnitsInStock, ReorderLevel
+  FROM Products
+  WHERE UnitsInStock < ReorderLevel
+  ORDER BY ProductID;
+
+-- 23
+SELECT ProductID, ProductName, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued
+  FROM Products
+  WHERE UnitsInStock + UnitsOnOrder <= ReorderLevel
+    AND Discontinued = false
+  ORDER BY ProductID;
+
+-- 24
+SELECT CustomerID, CompanyName, Region
+  FROM Customers
+  ORDER BY ISNULL(Region), Region, CustomerID;
+
+-- 25
+SELECT ShipCountry, ROUND(AVG(Freight), 2) as AverageFreight
+  FROM Orders
+  GROUP BY ShipCountry
+  ORDER BY AverageFreight DESC
+  LIMIT 3;

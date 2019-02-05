@@ -7,10 +7,13 @@ public class Ch5_3_SubstringSearch {
         assert (bfSearch("ABRA", text) == 8);
         assert (bfSearch("ABRAK", text) == text.length());
 
-        text = "AABRAACADABRAACAADABRA";
+        text = "ZACAAACADABRAACAADABRA";
         String pat = "AACAA";
         System.out.println("Text:    " + text);
         int loc = KMP(pat, text);
+        System.out.println("pattern: " + new String(new char[loc]).replace("\0", " ") + pat);
+
+        loc = BoyerMoore(pat, text);
         System.out.println("pattern: " + new String(new char[loc]).replace("\0", " ") + pat);
     }
 
@@ -51,5 +54,34 @@ public class Ch5_3_SubstringSearch {
         }
         if (j == M) return i - M;          // found (hit end of pattern)
         return i;                          // not found (hit end of text)
+    }
+
+    private static int BoyerMoore(String pat, String text) {
+        int N = text.length(), M = pat.length(), R = 128;
+        int[] right = new int[R];
+
+        // compute skip table: -1 for chars not in pattern
+        for (int r = 0; r < R; r++) {
+            right[r] = -1;
+        }
+        // rightmost position for characters in pattern
+        for (int j = 0; j < M; j++) {
+            right[pat.charAt(j)] = j;
+        }
+
+        int skip = 0;
+        // does the text match the pattern at pos i ?
+        for (int i = 0; i <= N-M; i += skip) {
+            int j;
+            for (j = M-1; j >= 0; j--) {
+                if (text.charAt(i+j) != pat.charAt(j)) {
+                    skip = Math.max(1, j - right[text.charAt(i+j)]);
+                    break;
+                }
+            }
+            if (j == -1) return i;  // found
+            // or set skip = 0 in the loop and test against it
+        }
+        return N;
     }
 }
