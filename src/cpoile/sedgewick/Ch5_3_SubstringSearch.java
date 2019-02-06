@@ -69,9 +69,8 @@ public class Ch5_3_SubstringSearch {
             right[pat.charAt(j)] = j;
         }
 
-        int skip = 0;
         // does the text match the pattern at pos i ?
-        for (int i = 0; i <= N-M; i += skip) {
+        for (int i = 0, skip = 0; i <= N-M; i += skip) {
             int j;
             for (j = M-1; j >= 0; j--) {
                 if (text.charAt(i+j) != pat.charAt(j)) {

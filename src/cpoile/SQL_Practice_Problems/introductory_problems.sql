@@ -142,3 +142,34 @@ SELECT ShipCountry, ROUND(AVG(Freight), 2) as AverageFreight
   GROUP BY ShipCountry
   ORDER BY AverageFreight DESC
   LIMIT 3;
+
+-- 26
+-- To do this, we need to add 18 years to each date:
+UPDATE Orders SET OrderDate = DATE_ADD(OrderDate, INTERVAL 18 YEAR);
+
+SELECT OrderID, OrderDate, CompanyName
+  FROM Orders as o JOIN Shippers as s ON o.ShipVia = s.ShipperID
+  WHERE OrderID = 10249;
+
+SELECT ShipCountry, ROUND(AVG(Freight), 2) as AvgFreight
+  FROM Orders
+  WHERE YEAR(OrderDate) = 2015
+  GROUP BY ShipCountry
+  ORDER BY AvgFreight DESC
+  LIMIT 3;
+
+-- 27
+SELECT ShipCountry, ROUND(AVG(Freight), 2) as AvgFreight
+  FROM Orders
+  WHERE Date(OrderDate) BETWEEN '2015/1/1' AND '2016/1/1'
+  GROUP BY ShipCountry
+  ORDER BY AvgFreight DESC
+  LIMIT 3;
+
+SELECT OrderID, OrderDate, ShipCountry, ROUND((Freight), 2)
+  FROM Orders
+  WHERE DATE(OrderDate) = '2015/12/31'
+  ORDER BY Freight DESC
+  LIMIT 3;
+
+select * from orders order by OrderDate LIMIT 700;
