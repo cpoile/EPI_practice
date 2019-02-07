@@ -145,10 +145,12 @@ SELECT ShipCountry, ROUND(AVG(Freight), 2) as AverageFreight
 
 -- 26
 -- To do this, we need to add 18 years to each date:
-UPDATE Orders SET OrderDate = DATE_ADD(OrderDate, INTERVAL 18 YEAR);
+UPDATE Orders
+SET OrderDate = DATE_ADD(OrderDate, INTERVAL 18 YEAR);
 
 SELECT OrderID, OrderDate, CompanyName
-  FROM Orders as o JOIN Shippers as s ON o.ShipVia = s.ShipperID
+  FROM Orders as o
+         JOIN Shippers as s ON o.ShipVia = s.ShipperID
   WHERE OrderID = 10249;
 
 SELECT ShipCountry, ROUND(AVG(Freight), 2) as AvgFreight
@@ -161,7 +163,7 @@ SELECT ShipCountry, ROUND(AVG(Freight), 2) as AvgFreight
 -- 27
 SELECT ShipCountry, ROUND(AVG(Freight), 2) as AvgFreight
   FROM Orders
-  WHERE Date(OrderDate) BETWEEN '2015/1/1' AND '2016/1/1'
+  WHERE Date(OrderDate) BETWEEN '2015/1/1' AND '2015/12/31'
   GROUP BY ShipCountry
   ORDER BY AvgFreight DESC
   LIMIT 3;
@@ -172,4 +174,40 @@ SELECT OrderID, OrderDate, ShipCountry, ROUND((Freight), 2)
   ORDER BY Freight DESC
   LIMIT 3;
 
-select * from orders order by OrderDate LIMIT 700;
+select *
+  from orders
+  order by OrderDate
+  LIMIT 700;
+
+-- 28
+SELECT ShipCountry, ROUND(AVG(Freight), 2) as AvgFreight
+  FROM Orders
+  WHERE OrderDate >= DATE_SUB((SELECT MAX(OrderDate) FROM Orders), INTERVAL 1 YEAR)
+  GROUP BY ShipCountry
+  ORDER BY AvgFreight DESC
+  LIMIT 3;
+
+-- 29
+SELECT e.EmployeeID, LastName, o.OrderID, ProductName, Quantity
+  FROM Employees as e
+         JOIN Orders as o ON e.EmployeeID = o.EmployeeID
+         JOIN `Order Details` as od ON od.OrderID = o.OrderID
+         JOIN Products as p ON p.ProductID = od.ProductID
+  ORDER BY OrderID, od.ProductID;
+
+-- 30
+SELECT c.CustomerID as Customers_CustomerID, o.CustomerID as Orders_CustomerID
+  FROM Customers as c
+         LEFT JOIN Orders as o ON c.CustomerID = o.CustomerID
+  WHERE o.CustomerID IS NULL;
+
+-- 31
+
+SELECT c.CustomerID
+  FROM Customers as c
+         LEFT JOIN Orders as o ON c.CustomerID = o.CustomerID AND o.EmployeeID = 4
+  WHERE o.CustomerID IS NULL;
+
+SELECT c.CustomerID
+  FROM Customers as c
+  WHERE c.CustomerID NOT IN (SELECT o.CustomerID FROM Orders as o WHERE EmployeeID = 4);
