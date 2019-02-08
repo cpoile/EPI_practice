@@ -211,3 +211,55 @@ SELECT c.CustomerID
 SELECT c.CustomerID
   FROM Customers as c
   WHERE c.CustomerID NOT IN (SELECT o.CustomerID FROM Orders as o WHERE EmployeeID = 4);
+
+-- 32
+
+SELECT c.CustomerID, CompanyName, o.OrderID, ROUND(SUM(UnitPrice * Quantity), 2) as TotalOrderAmount
+  FROM Orders as o
+         JOIN `Order Details` as od ON o.OrderID = od.OrderID
+         JOIN Customers as c ON o.CustomerID = c.CustomerID
+  WHERE YEAR(OrderDate) = 2016
+  GROUP BY o.OrderID
+  HAVING TotalOrderAmount > 10000
+  ORDER BY TotalOrderAmount DESC;
+
+-- 33
+
+SELECT c.CustomerID, CompanyName, ROUND(SUM(UnitPrice * Quantity), 2) as TotalOrderAmount
+  FROM Orders as o
+         JOIN `Order Details` as od ON o.OrderID = od.OrderID
+         JOIN Customers as c ON o.CustomerID = c.CustomerID
+  WHERE YEAR(OrderDate) = 2016
+  GROUP BY c.CustomerID
+  HAVING TotalOrderAmount >= 15000
+  ORDER BY TotalOrderAmount DESC;
+
+-- 34
+SELECT c.CustomerID, CompanyName, ROUND(SUM(UnitPrice * Quantity * (1 - Discount)), 2) as TotalOrderAmount
+  FROM Orders as o
+         JOIN `Order Details` as od ON o.OrderID = od.OrderID
+         JOIN Customers as c ON o.CustomerID = c.CustomerID
+  WHERE YEAR(OrderDate) = 2016
+  GROUP BY c.CustomerID
+  HAVING TotalOrderAmount >= 15000
+  ORDER BY TotalOrderAmount DESC;
+
+-- 35
+SELECT OrderID, EmployeeID, DATE(OrderDate)
+  FROM Orders
+  WHERE OrderDate = LAST_DAY(OrderDate)
+  ORDER BY EmployeeID, OrderID;
+
+-- 36
+SELECT o.OrderID, COUNT(*) as TotalOrderDetails
+  FROM Orders as o
+         JOIN `Order Details` as od ON o.OrderID = od.OrderID
+  GROUP BY o.OrderID
+  ORDER BY TotalOrderDetails DESC
+  LIMIT 10;
+
+SELECT OrderID, COUNT(*) as TotalOrderDetails
+  FROM `Order Details`
+  GROUP BY OrderID
+  ORDER BY TotalOrderDetails DESC
+  LIMIT 10;
