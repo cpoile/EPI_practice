@@ -1,8 +1,15 @@
 -- 1
 USE northwind;
 
+-- To do some of the questions, we need to add 18 years to each date:
+UPDATE Orders
+SET OrderDate = DATE_ADD(OrderDate, INTERVAL 18 YEAR);
+
+
+SHOW TABLES;
+
 SELECT *
-  FROM shippers;
+  FROM Orders;
 
 -- 2
 SELECT CategoryName, Description
@@ -144,10 +151,6 @@ SELECT ShipCountry, ROUND(AVG(Freight), 2) as AverageFreight
   LIMIT 3;
 
 -- 26
--- To do this, we need to add 18 years to each date:
-UPDATE Orders
-SET OrderDate = DATE_ADD(OrderDate, INTERVAL 18 YEAR);
-
 SELECT OrderID, OrderDate, CompanyName
   FROM Orders as o
          JOIN Shippers as s ON o.ShipVia = s.ShipperID
@@ -263,3 +266,22 @@ SELECT OrderID, COUNT(*) as TotalOrderDetails
   GROUP BY OrderID
   ORDER BY TotalOrderDetails DESC
   LIMIT 10;
+
+-- 37
+-- can't do this in mysql
+
+-- can just order randomly and pick a top few:
+SELECT OrderID
+  FROM `Order Details`
+  ORDER BY RAND()
+  LIMIT 15;
+
+-- 38
+SELECT OrderID
+  FROM `Order Details`
+  WHERE Quantity >= 60
+  GROUP BY OrderID, Quantity
+  HAVING COUNT(*) > 1;
+
+
+

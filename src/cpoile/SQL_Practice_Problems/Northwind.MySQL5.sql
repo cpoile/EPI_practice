@@ -4440,169 +4440,169 @@ END $$
 
 DELIMITER ;
 
-# ---------------------------------------------------------------------- #
-# Add FUNCTION "MyRound"                                                 #
-# ---------------------------------------------------------------------- #
-
-DROP FUNCTION IF EXISTS `MyRound`;
-
-DELIMITER $$
-
-CREATE FUNCTION `MyRound`(Operand DOUBLE,Places INTEGER) RETURNS DOUBLE
-DETERMINISTIC
-BEGIN
-
-DECLARE x DOUBLE;
-DECLARE i INTEGER;
-DECLARE ix DOUBLE;
-
-  SET x = Operand*POW(10,Places);
-  SET i=x;
-  
-  IF (i-x) >= 0.5 THEN                   
-    SET ix = 1;                  
-  ELSE
-    SET ix = 0;                 
-  END IF;     
-
-  SET x=i+ix;
-  SET x=x/POW(10,Places);
-
-RETURN x;
-
-
-END $$
-
-DELIMITER ;
-
-# ---------------------------------------------------------------------- #
-# Add PROCEDURE "LookByFName"                                            #
-# ---------------------------------------------------------------------- #
-
-DROP PROCEDURE IF EXISTS `LookByFName`;
-
-DELIMITER $$
-
-CREATE PROCEDURE `LookByFName`(IN AtFirstLetter CHAR(1))
-BEGIN
-     SELECT * FROM Employees  Where LEFT(FirstName, 1)=AtFirstLetter;
-
-END $$
-
-DELIMITER ;
-
-# ---------------------------------------------------------------------- #
-# Add FUNCTION "DateOnly"                                                #
-# ---------------------------------------------------------------------- #
-
-DELIMITER $$
-
-DROP FUNCTION IF EXISTS `DateOnly` $$
-
-CREATE FUNCTION `DateOnly` (InDateTime datetime) RETURNS VARCHAR(10)
-BEGIN
-
-  DECLARE MyOutput varchar(10);
-	SET MyOutput = DATE_FORMAT(InDateTime,'%Y-%m-%d');
-
-  RETURN MyOutput;
-
-END $$
-
-DELIMITER ;
-
-# ---------------------------------------------------------------------- #
-# Add PROCEDURE  "sp_employees_cursor" CURSOR SAMPLE                     #
-# ---------------------------------------------------------------------- #
-DELIMITER $$
-
-DROP PROCEDURE IF EXISTS `sp_employees_cursor` $$
-CREATE PROCEDURE `sp_employees_cursor`(IN city_in VARCHAR(15))
-BEGIN
-  DECLARE name_val VARCHAR(10);
-  DECLARE surname_val VARCHAR(10);
-  DECLARE photopath_val VARCHAR(255);
-
-  DECLARE no_more_rows BOOLEAN;
-
-  DECLARE fetch_status INT DEFAULT 0;
-
-  DECLARE employees_cur CURSOR FOR SELECT firstname, lastname,photopath FROM employees WHERE city = city_in;
-
-  DECLARE CONTINUE HANDLER FOR NOT FOUND SET no_more_rows = TRUE;
-
-  DROP TABLE IF EXISTS atpeople;
-  CREATE TABLE atpeople(
-    FirstName VARCHAR(10),
-    LastName VARCHAR(20),
-    PhotoPath VARCHAR(255)
-  );
-
-
-  OPEN employees_cur;
-  select FOUND_ROWS() into fetch_status;
-
-
-  the_loop: LOOP
-
-    FETCH  employees_cur  INTO   name_val,surname_val,photopath_val;
-
-
-    IF no_more_rows THEN
-       CLOSE employees_cur;
-       LEAVE the_loop;
-    END IF;
-
-
-    INSERT INTO atpeople SELECT  name_val,surname_val,photopath_val;
-
-  END LOOP the_loop;
-
-  SELECT * FROM atpeople;
-  DROP TABLE atpeople;
-
-END $$
-
-DELIMITER ;
-
-# ---------------------------------------------------------------------- #
-# Add PROCEDURE  "sp_employees_rownum" rownum SAMPLE                     #
-# ---------------------------------------------------------------------- #
-  
-DELIMITER $$
-
-DROP PROCEDURE IF EXISTS `sp_employees_rownum`$$
-CREATE PROCEDURE `sp_employees_rownum` ()
-BEGIN
-
-SELECT *
-FROM
-(select @rownum:=@rownum+1  as RowNum,
-  p.* from employees p
-   ,(SELECT @rownum:=0) R
-   order by firstname desc limit 10
-) a
-WHERE a.RowNum >= 2 AND a.RowNum<= 4;
-
-END $$
-
-DELIMITER ;
-
-# ---------------------------------------------------------------------- #
-# Add PROCEDURE  "sp_employees_rollup" rollup SAMPLE                     #
-# ---------------------------------------------------------------------- #
-  
-DELIMITER $$
-
-DROP PROCEDURE IF EXISTS `sp_employees_rollup`$$
-CREATE PROCEDURE `sp_employees_rollup` ()
-BEGIN
-SELECT Distinct City ,Sum(Salary) Salary_By_City FROM employees
-GROUP BY City WITH ROLLUP;
-
-END $$
-
-DELIMITER ;
+# # ---------------------------------------------------------------------- #
+# # Add FUNCTION "MyRound"                                                 #
+# # ---------------------------------------------------------------------- #
+#
+# DROP FUNCTION IF EXISTS `MyRound`;
+#
+# DELIMITER $$
+#
+# CREATE FUNCTION `MyRound`(Operand DOUBLE,Places INTEGER) RETURNS DOUBLE
+# DETERMINISTIC
+# BEGIN
+#
+# DECLARE x DOUBLE;
+# DECLARE i INTEGER;
+# DECLARE ix DOUBLE;
+#
+#   SET x = Operand*POW(10,Places);
+#   SET i=x;
+#
+#   IF (i-x) >= 0.5 THEN
+#     SET ix = 1;
+#   ELSE
+#     SET ix = 0;
+#   END IF;
+#
+#   SET x=i+ix;
+#   SET x=x/POW(10,Places);
+#
+# RETURN x;
+#
+#
+# END $$
+#
+# DELIMITER ;
+#
+# # ---------------------------------------------------------------------- #
+# # Add PROCEDURE "LookByFName"                                            #
+# # ---------------------------------------------------------------------- #
+#
+# DROP PROCEDURE IF EXISTS `LookByFName`;
+#
+# DELIMITER $$
+#
+# CREATE PROCEDURE `LookByFName`(IN AtFirstLetter CHAR(1))
+# BEGIN
+#      SELECT * FROM Employees  Where LEFT(FirstName, 1)=AtFirstLetter;
+#
+# END $$
+#
+# DELIMITER ;
+#
+# # ---------------------------------------------------------------------- #
+# # Add FUNCTION "DateOnly"                                                #
+# # ---------------------------------------------------------------------- #
+#
+# DELIMITER $$
+#
+# DROP FUNCTION IF EXISTS `DateOnly` $$
+#
+# CREATE FUNCTION `DateOnly` (InDateTime datetime) RETURNS VARCHAR(10)
+# BEGIN
+#
+#   DECLARE MyOutput varchar(10);
+# 	SET MyOutput = DATE_FORMAT(InDateTime,'%Y-%m-%d');
+#
+#   RETURN MyOutput;
+#
+# END $$
+#
+# DELIMITER ;
+#
+# # ---------------------------------------------------------------------- #
+# # Add PROCEDURE  "sp_employees_cursor" CURSOR SAMPLE                     #
+# # ---------------------------------------------------------------------- #
+# DELIMITER $$
+#
+# DROP PROCEDURE IF EXISTS `sp_employees_cursor` $$
+# CREATE PROCEDURE `sp_employees_cursor`(IN city_in VARCHAR(15))
+# BEGIN
+#   DECLARE name_val VARCHAR(10);
+#   DECLARE surname_val VARCHAR(10);
+#   DECLARE photopath_val VARCHAR(255);
+#
+#   DECLARE no_more_rows BOOLEAN;
+#
+#   DECLARE fetch_status INT DEFAULT 0;
+#
+#   DECLARE employees_cur CURSOR FOR SELECT firstname, lastname,photopath FROM employees WHERE city = city_in;
+#
+#   DECLARE CONTINUE HANDLER FOR NOT FOUND SET no_more_rows = TRUE;
+#
+#   DROP TABLE IF EXISTS atpeople;
+#   CREATE TABLE atpeople(
+#     FirstName VARCHAR(10),
+#     LastName VARCHAR(20),
+#     PhotoPath VARCHAR(255)
+#   );
+#
+#
+#   OPEN employees_cur;
+#   select FOUND_ROWS() into fetch_status;
+#
+#
+#   the_loop: LOOP
+#
+#     FETCH  employees_cur  INTO   name_val,surname_val,photopath_val;
+#
+#
+#     IF no_more_rows THEN
+#        CLOSE employees_cur;
+#        LEAVE the_loop;
+#     END IF;
+#
+#
+#     INSERT INTO atpeople SELECT  name_val,surname_val,photopath_val;
+#
+#   END LOOP the_loop;
+#
+#   SELECT * FROM atpeople;
+#   DROP TABLE atpeople;
+#
+# END $$
+#
+# DELIMITER ;
+#
+# # ---------------------------------------------------------------------- #
+# # Add PROCEDURE  "sp_employees_rownum" rownum SAMPLE                     #
+# # ---------------------------------------------------------------------- #
+#
+# DELIMITER $$
+#
+# DROP PROCEDURE IF EXISTS `sp_employees_rownum`$$
+# CREATE PROCEDURE `sp_employees_rownum` ()
+# BEGIN
+#
+# SELECT *
+# FROM
+# (select @rownum:=@rownum+1  as RowNum,
+#   p.* from employees p
+#    ,(SELECT @rownum:=0) R
+#    order by firstname desc limit 10
+# ) a
+# WHERE a.RowNum >= 2 AND a.RowNum<= 4;
+#
+# END $$
+#
+# DELIMITER ;
+#
+# # ---------------------------------------------------------------------- #
+# # Add PROCEDURE  "sp_employees_rollup" rollup SAMPLE                     #
+# # ---------------------------------------------------------------------- #
+#
+# DELIMITER $$
+#
+# DROP PROCEDURE IF EXISTS `sp_employees_rollup`$$
+# CREATE PROCEDURE `sp_employees_rollup` ()
+# BEGIN
+# SELECT Distinct City ,Sum(Salary) Salary_By_City FROM employees
+# GROUP BY City WITH ROLLUP;
+#
+# END $$
+#
+# DELIMITER ;
 
 # ---------------------------------------------------------------------- #
 # Add PROCEDURE  "sp_employees_rank" rank SAMPLE                         #
